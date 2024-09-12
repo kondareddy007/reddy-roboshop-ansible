@@ -49,7 +49,7 @@
      name: mongodb-org-shell
      state: present
   - name: get the categories count
-    command: mongo --host mongodb.reddy1229.online < /app/schema/catalogue.js --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
+    command: mongo --host mongodb.reddy1229.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
     register: product_count
   - name: print product count
     debug: 
