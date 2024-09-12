@@ -8,3 +8,23 @@
     dnf:
      name: nodejs
      state: present
+  - name: Create user for roboshop
+    user:
+     name: roboshop
+  - name: Recursively remove app directory
+    file:
+     path: /app
+     state: absent
+  - name: Create directory
+    file:
+     path: /app
+     state: present
+  - name: download catalogue application
+    get_url: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+     dest: /tmp
+  - name: extract catalogue application
+    unarchive:
+     src: /tmp/catalogue.zip
+     dest: /app
+     
+     
