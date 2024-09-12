@@ -18,13 +18,14 @@
   - name: Create directory
     file:
      path: /app
-     state: present
+     state: directory
   - name: download catalogue application
-    get_url: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+    get_url: 
+     url: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
      dest: /tmp
   - name: extract catalogue application
     unarchive:
      src: /tmp/catalogue.zip
      dest: /app
-     
+
      
