@@ -10,6 +10,10 @@
     file:
      path: /usr/share/nginx/html/
      state: absent
+  - name: Cteate html directory
+    file:
+     path: /usr/share/nginx/html/
+     state: directory
   - name: download web.zip file
     get_url:
      url: https://roboshop-builds.s3.amazonaws.com/web.zip
