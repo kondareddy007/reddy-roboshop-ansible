@@ -32,13 +32,3 @@
      name: nginx
      state: restarted
      enabled: yes
-
-
-
-
-
-  - name: start and enable nginx
-    service:
-     name: nginx
-     state: started
-     enabled: yes 
