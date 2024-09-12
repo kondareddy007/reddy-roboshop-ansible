@@ -49,7 +49,7 @@
      name: mongodb-org-shell
      state: present
   - name: get the categories count
-    command: mongo --host mongodb.reddy1229.online </app/schema/catalogue.js
+    command: mongo --host mongodb.reddy1229.online < /app/schema/catalogue.js
      
 
 
