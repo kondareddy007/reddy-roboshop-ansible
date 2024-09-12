@@ -3,7 +3,7 @@
   become: true
   tasks:
   - name: disable nodejs and enable nodejs
-    command: dnf module disable nodejs -y ; dnf module enable nodejs:18 -y
+    shell: dnf module disable nodejs -y ; dnf module enable nodejs:18 -y
   - name: Install NodeJS
     dnf:
      name: nodejs
