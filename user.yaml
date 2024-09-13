@@ -70,7 +70,7 @@
   #     msg: "product count: {{user_count}}"
 
   - name: load user data
-    ansible.builtin.command: mongo --host mongodb.daws76s.online < /app/schema/user.js
+    ansible.builtin.command: mongo --host mongodb.reddy1229.online < /app/schema/user.js
     when: user_count.stdout == "0" # keep double quotes
 
   - name: start and enable user
