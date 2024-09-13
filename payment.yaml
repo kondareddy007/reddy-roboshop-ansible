@@ -36,7 +36,7 @@
      chdir: /app
   - name: Copy payment service
     copy: payment.service
-    dest: /etc/systemd/system/payment.service
+     dest: /etc/systemd/system/payment.service
   - name: deamon realod and start
     systemd.service:
      daemon_reload: yes
