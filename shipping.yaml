@@ -61,14 +61,7 @@
       name: shipping
       state: restarted
       enabled: yes
-  
-  - name: check cities schema exists or not
-    command: mysql -h mysql.reddy1229.online -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
-    register: schema
 
-  - name: Print schema
-    debug:
-     msg: "schema output:{{schema}}"
 
 
 #mysql -h mysql.reddy1229.online -uroot -pRoboShop@1 --to connect the data base
