@@ -1,45 +1,55 @@
-- name: This service is responsible for payments in RoboShop e-commerce app. This service is written on Python 3.6, So need it to run this app.
+- name: payment
   hosts: payment
-  become: true
-  tasks: 
+  become: yes
+  tasks:
   - name: Install python packages
-    dnf:
-     name: "{{item}}"
-     state: present
+    ansible.builtin.dnf:
+      name: "{{item}}" 
+      state: present
     loop:
     - python36
     - gcc
     - python3-devel
+
   - name: create roboshop user
-    user:
-     name: roboshop
+    ansible.builtin.user:
+      name: roboshop
+
   - name: Recursively remove app directory
-    file:
-     path: /app
-     state: absent
-  - name: Create directory
-    file:
-     path: /app
-     state: directory
+    ansible.builtin.file:
+      path: /app
+      state: absent
+
+  - name: create app directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+
   - name: download payment application
-    get_url:
-     url: https://roboshop-builds.s3.amazonaws.com/payment.zip
-     dest: /tmp/payment.zip
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/payment.zip
+      dest: /tmp
+
   - name: extract payment application
-    unarchive:
-     src: /tmp/payment.zip
-     dest: /app
-     remote_src: yes
+    ansible.builtin.unarchive:
+      src: /tmp/payment.zip
+      dest: /app
+      remote_src: yes
+
   - name: Install dependencies
-    command: pip3.6 install -r requirements.txt
+    ansible.builtin.command: pip3.6 install -r requirements.txt
     args:
-     chdir: /app
+      chdir: /app
+
   - name: Copy payment service
-    copy: payment.service
-     dest: /etc/systemd/system/payment.service
+    ansible.builtin.copy:
+      src: payment.service
+      dest: /etc/systemd/system/payment.service
+
   - name: deamon realod and start
-    systemd.service:
-     daemon_reload: yes
+    ansible.builtin.systemd_service:
+      daemon_reload: true
+
   - name: start and enable payment
     ansible.builtin.service:
       name: payment
