@@ -1,0 +1,66 @@
+- name: Shipping service is responsible for finding the distance of the package to be shipped and calculate the price based on that.
+  hosts: shipping
+  become: true
+  tasks:
+  - name: Install maven
+    dnf:
+     name: maven
+     state: present
+  - name: Create user
+    user:
+     name: roboshop
+  - name: Recursively remove app directory
+    file:
+     path: /app
+     state: absent
+  - name: Create app directory
+    file:
+     path: /app
+     state: directory
+  - name: Download the application code to created app directory.
+    get_url:
+     url: https://roboshop-builds.s3.amazonaws.com/shipping.zip
+     dest: /tmp
+  - name: Extract shipping zip file
+    unarchive:
+     src: /tmp/shipping.zip
+     dest: /app
+     remote_src: yes
+  - name: install dependencies
+    command: mvn clean package
+    args:
+     chdir: /app
+  - name: Rename jar file
+    command: mv target/shipping-1.0.jar shipping.jar
+    args:
+     chdir: /app
+  - name: copy shipping service
+    copy:
+     src: shipping.service
+     dest: /etc/systemd/system/shipping.service
+  - name: Load daemon-reload
+    systemd_service:
+     daemon_reload: yes
+  - name: Install mysql client
+    dnf:
+     name: mysql
+    state: present
+  - name: check cities schema exists or not
+    command: mysql -h mysql.reddy1229.online -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
+    register: schema
+  - name: print output
+    debug:
+     msg: "Schema output: {{schema}}"
+  - name: load cities data
+    shell: "mysql -h mysql.reddy1229.online -uroot -p{{mysql_password}}  < /app/schema/shipping.sql"
+    when: schema.stdout != "1"
+  - name: start and enable shipping
+    ansible.builtin.service:
+      name: shipping
+      state: restarted
+      enabled: yes
+  
+    
+
+
+ 

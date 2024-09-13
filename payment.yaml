@@ -1,0 +1,47 @@
+- name: This service is responsible for payments in RoboShop e-commerce app. This service is written on Python 3.6, So need it to run this app.
+  hosts: payment
+  become: true
+  tasks: 
+  - name: Install python packages
+    dnf:
+     name: "{{item}}"
+     state: present
+    loop:
+    - python36
+    - gcc
+    - python3-devel
+  - name: create roboshop user
+    user:
+     name: roboshop
+  - name: Recursively remove app directory
+    file:
+     path: /app
+     state: absent
+  - name: Create app directory
+    file:
+     path: /app
+     state: directory
+  - name: download payment application
+    get_url:
+     url: https://roboshop-builds.s3.amazonaws.com/payment.zip
+     dest: /tmp/payment.zip
+  - name: extract payment application
+    unarchive:
+     src: /tmp/payment.zip
+     dest: /app
+     remote_src: yes
+  - name: Install dependencies
+    command: pip3.6 install -r requirements.txt
+    args:
+     chdir: /app
+  - name: Copy payment service
+    copy: payment.service
+    dest: /etc/systemd/system/payment.service
+  - name: deamon realod and start
+    systemd.service:
+     daemon_reload: yes
+  - name: start and enable payment
+    ansible.builtin.service:
+      name: payment
+      state: restarted
+      enabled: yes
