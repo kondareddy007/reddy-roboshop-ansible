@@ -1,68 +1,56 @@
-- name: Cart is a microservice that is responsible for Cart Service in RobotShop e-commerce portal.
+- name: cart
   hosts: cart
-  become: true
+  become: yes
   tasks:
-  - name: disable nodejs and enable nodejs
-    shell: dnf module disable nodejs -y ; dnf module enable nodejs:18 -y
-  - name: Install NodeJS
-    dnf:
-     name: nodejs
-     state: present
-  - name: Create user for roboshop
-    user:
-     name: roboshop
+  - name: disable old nodejs and enable nodejs
+    ansible.builtin.shell: dnf module disable nodejs -y ; dnf module enable nodejs:18 -y
+
+  - name: Install nodejs
+    ansible.builtin.dnf:
+      name: nodejs 
+      state: present
+
+  - name: create roboshop user
+    ansible.builtin.user:
+      name: roboshop
+
   - name: Recursively remove app directory
-    file:
-     path: /app
-     state: absent 
-  - name: Create directory
-    file:
-     path: /app
-     state: directory
+    ansible.builtin.file:
+      path: /app
+      state: absent
+
+  - name: create app directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+
   - name: download cart application
-    get_url: 
-     url: https://roboshop-builds.s3.amazonaws.com/cart.zip
-     dest: /tmp
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/cart.zip
+      dest: /tmp
+
   - name: extract cart application
-    unarchive:
-     src: /tmp/cart.zip
-     dest: /app
-     remote_src: yes
-  - name: Download dependencies
-    command: npm install
+    ansible.builtin.unarchive:
+      src: /tmp/cart.zip
+      dest: /app
+      remote_src: yes
+
+  - name: Install dependencies
+    ansible.builtin.command: npm install
     args:
-     chdir: /app
-  - name: Copy cart services
-    copy:
-     src: cart.service
-     dest: /etc/systemd/system/cart.service
-  - name: deamon realod and start
-    systemd_service:
-     daemon_reload: true 
- # let's start after the data is loaded
-  - name: Copy mongodb repo
+      chdir: /app
+
+  - name: Copy cart service
     ansible.builtin.copy:
-      src: mongodb.repo
-      dest: /etc/yum.repos.d/mongodb.repo
-  - name: Install mongodb client
-    package:
-     name: mongodb-org-shell
-     state: present
-  - name: get the categories count
-    command: mongo --host mongodb.reddy1229.online --quiet --eval 'db = db.getSiblingDB("cart"); db.products.count()'
-    register: product_count
-  # - name: print product count
-  #   debug: 
-  #    msg: "product count: {{product_count}}"
-  - name: Load cart data
-    command: mongo --host mongodb.reddy1229.online < /app/schema/cart.js
-    when: product_count.stdout == "0" #keep double quote
+      src: cart.service
+      dest: /etc/systemd/system/cart.service
+
+  - name: deamon realod and start
+    ansible.builtin.systemd_service:
+      daemon_reload: true
+
   - name: start and enable cart
     ansible.builtin.service:
       name: cart
       state: restarted
       enabled: yes
-     
-
-
-     
