@@ -40,13 +40,13 @@
     copy:
      src: shipping.service
      dest: /etc/systemd/system/shipping.service
-  - name: Load daemon-reload
-    systemd_service:
-     daemon_reload: yes
+  - name: deamon realod and start
+    ansible.builtin.systemd_service:
+      daemon_reload: true
   - name: Install mysql client
     dnf:
      name: mysql
-    state: present
+     state: present
   - name: check cities schema exists or not
     command: mysql -h mysql.reddy1229.online -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
     register: schema
@@ -62,7 +62,7 @@
       state: restarted
       enabled: yes
   
-  - name: 
+  - name: check cities schema exists or not
     command: mysql -h mysql.reddy1229.online -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
     register: schema
 
