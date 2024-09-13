@@ -1,6 +1,8 @@
 - name: Shipping service is responsible for finding the distance of the package to be shipped and calculate the price based on that.
   hosts: shipping
   become: true
+  vars:
+   mysql_password: RoboShop@1
   tasks:
   - name: Install maven
     dnf:
@@ -59,6 +61,21 @@
       name: shipping
       state: restarted
       enabled: yes
+  
+  - name: 
+    command: mysql -h mysql.reddy1229.online -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
+    register: schema
+
+  - name: Print schema
+    debug:
+     msg: "schema output:{{schema}}"
+
+
+#mysql -h mysql.reddy1229.online -uroot -pRoboShop@1 --to connect the data base
+# show databases; -->to see databases in my sql
+#mysql -h mysql.reddy1229.online -uroot -pRoboShop@1 -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'mysql'"
+#mysql -h mysql.reddy1229.online -uroot -pRoboShop@1 -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
+#mysql -h mysql.reddy1229.online -uroot -pRoboShop@1 -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"      
   
     
 
