@@ -1,0 +1,23 @@
+- name: Redis installation
+hosts: redis
+become: true
+tasks:
+- name: install remi repo
+  dnf: 
+   name: https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+   state: present
+- name: enable redis
+  command: dnf module enable redis:remi-6.2
+- name: Install redis
+  dnf:
+   name: redis
+   state: present
+- name: Allow remote connection (127.0.0.1 to 0.0.0.0 in /etc/redis.conf & /etc/redis/redis.conf)
+  replace:
+   regexp: '127.0.0.1'
+   replace: '0.0.0.0'
+- name: Start and enable redis
+  service:
+   name: redis
+   state: restarted
+   enabled: yes
