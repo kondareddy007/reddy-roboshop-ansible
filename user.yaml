@@ -56,7 +56,7 @@
   #    msg: "product count: {{user_count}}"
   - name: Load catalogue data
     command: mongo --host mongodb.reddy1229.online < /app/schema/user.js
-    when: product_count.stdout == "0" #keep double quote
+    when: user_count.stdout == "0" #keep double quote
   - name: start and enable user
     ansible.builtin.service:
       name: user
