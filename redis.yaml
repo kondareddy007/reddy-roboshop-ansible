@@ -1,4 +1,4 @@
-- name: install redis component
+- name: Redis is used for in-memory data storage(Caching) and allows users to access the data of database over API.
   hosts: redis
   become: yes
   tasks:

@@ -1,0 +1,68 @@
+- name: User 
+  hosts: user
+  become: true
+  tasks:
+  - name: disable nodejs and enable nodejs
+    shell: dnf module disable nodejs -y ; dnf module enable nodejs:18 -y
+  - name: Install NodeJS
+    dnf:
+     name: nodejs
+     state: present
+  - name: Create user for roboshop
+    user:
+     name: roboshop
+  - name: Recursively remove app directory
+    file:
+     path: /app
+     state: absent 
+  - name: Create directory
+    file:
+     path: /app
+     state: directory
+  - name: download User application
+    get_url: 
+     url: https://roboshop-builds.s3.amazonaws.com/user.zip
+     dest: /tmp
+  - name: extract user application
+    unarchive:
+     src: /tmp/user.zip
+     dest: /app
+     remote_src: yes
+  - name: Download dependencies
+    command: npm install
+    args:
+     chdir: /app
+  - name: Copy user services
+    copy:
+     src: user.service
+     dest: /etc/systemd/system/user.service
+  - name: deamon realod and start
+    systemd_service:
+     daemon_reload: true 
+ # let's start after the data is loaded
+  - name: Copy mongodb repo
+    ansible.builtin.copy:
+      src: mongodb.repo
+      dest: /etc/yum.repos.d/mongodb.repo
+  - name: Install mongodb client
+    package:
+     name: mongodb-org-shell
+     state: present
+  - name: get the categories count
+    command: mongo --host mongodb.reddy1229.online --quiet --eval 'db = db.getSiblingDB("users"); db.users.count()'
+    register: user_count
+  # - name: print product count
+  #   debug: 
+  #    msg: "product count: {{user_count}}"
+  - name: Load catalogue data
+    command: mongo --host mongodb.reddy1229.online < /app/schema/user.js
+    when: product_count.stdout == "0" #keep double quote
+  - name: start and enable user
+    ansible.builtin.service:
+      name: user
+      state: restarted
+      enabled: yes
+     
+
+
+     

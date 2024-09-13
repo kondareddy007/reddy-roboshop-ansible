@@ -1,4 +1,4 @@
-- name: install web component
+- name: The Web/Frontend is the service in RoboShop to serve the web content over Nginx.
   hosts: web
   become: yes
   tasks:
