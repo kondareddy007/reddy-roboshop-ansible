@@ -24,7 +24,7 @@
 # show databases; -->to see databases in my sql
 #mysql -h mysql.reddy1229.online -uroot -pRoboShop@1 -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'mysql'"
 #mysql -h mysql.reddy1229.online -uroot -pRoboShop@1 -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
-
+#mysql -h mysql.reddy1229.online -uroot -pRoboShop@1 -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'cities'"
 
 
      
